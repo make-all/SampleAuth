@@ -1,15 +1,14 @@
-# SampleAuth Plugin
+# ServerAuth Plugin
 
-This is a sample authentication plugin showing how a MantisBT authentication plugin can implement its own authentication and control authentication related flags on a per user basis.
+This is an authentication plugin to authorize users based on prior authentication by the web server.  Primary use-cases are where there is a single-sign-on authentication method, which is handled by web server authentication modules.  For example mod_auth_kerberos, mod_auth_openidc and similar Apache modules, or equivalents for nginx and other servers.
 
 The authentication mechanism implemented by this plugin works as follows:
-- If user is administrator, use standard authentication.
-- If user is not registered in the db, user standard behavior.
-- Otherwise, auto-signin the user without a password.
+- username is extracted from the REMOTE_USER server provided variable.
+- if the user exists, they are auto-signed in without requiring a password.
+- if the user does not exist, they can be optionally auto-created.
+- when auto creating users, they can optionally use other server variables to populate realname and email address (if the server authentication module can provide such info).
 
-Users that are auto-signed in, can't manage or use passwords that are stored in the MantisBT database.
-
-The plugin can be easily modified to redirect to an identity provider and validate the token returned or validate a username and password against a database or LDAP.
+Users can't manage or use passwords that are stored in the MantisBT database when this authentication plugin is used.
 
 ## Authentication Flags
 The authentication flags events enables the plugin to control MantisBT core authentication behavior on a per user basis.
@@ -36,19 +35,5 @@ the user typed in the first login page that asks for username.
 If plugin doesn't want to handle a specific user, it should return null.  Otherwise, it should
 return the `AuthFlags` with the overriden settings.
 
-## Screenshots
-
-Native Login Page for Username
-
-![Login Page](doc/native_login_form_for_username.png "Native Login Page")
-
-Native Credentials Page for Password (skipped for non-administrators)
-
-![Credentials Page](doc/native_credentials_page.png "Native Credentials Page")
-
-User My Account Page
-
-![Profile Page](doc/sample_auth_no_password_change.png "Profile Page")
-
 ## Dependencies
-MantisBT v2.3.0-dev once auth plugin support is added.
+MantisBT v2.4.0.

@@ -2,5 +2,5 @@
 # Copyright (c) MantisBT Team - mantisbt-dev@lists.sourceforge.net
 # Licensed under the MIT license
 
-$s_plugin_SampleAuth_title = 'SampleAuth';
-$s_plugin_SampleAuth_description = 'A plugin that demonstrates how to implement auth plugins.';
+$s_plugin_ServerAuth_title = 'ServerAuth';
+$s_plugin_ServerAuth_description = 'A plugin that defers to the web server for authentication.';

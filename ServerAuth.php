@@ -1,11 +1,12 @@
 <?php
 # Copyright (c) MantisBT Team - mantisbt-dev@lists.sourceforge.net
+# Copyright (c) 2017 Mr Maker - make-all@users.github.com
 # Licensed under the MIT license
 
 /**
- * Sample Auth plugin
+ * Server Auth plugin
  */
-class SampleAuthPlugin extends MantisPlugin  {
+class ServerAuthPlugin extends MantisPlugin  {
 	/**
 	 * A method that populates the plugin information and minimum requirements.
 	 * @return void
@@ -17,7 +18,7 @@ class SampleAuthPlugin extends MantisPlugin  {
 
 		$this->version = '0.1';
 		$this->requires = array(
-			'MantisCore' => '2.3.0-dev',
+			'MantisCore' => '2.4.0',
 		);
 
 		$this->author = 'MantisBT Team';

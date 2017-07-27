@@ -32,10 +32,24 @@ class ServerAuthPlugin extends MantisPlugin  {
 	 */
 	function hooks() {
 		$t_hooks = array(
+			'EVENT_CORE_READY' => 'auto_login',
 			'EVENT_AUTH_USER_FLAGS' => 'auth_user_flags',
 		);
 
 		return $t_hooks;
+	}
+
+	function auto_login() {
+		if ( auth_is_user_authenticated() ) {
+			return;
+		}
+		$t_username = $_SERVER['REMOTE_USER'];
+		$t_user_id = empty($t_username) ? false : user_get_id_by_name( $t_username );
+		if ( !$t_user_id ) {
+			// TODO auto create users
+			return;
+		}
+		auth_login_user( $t_user_id );
 	}
 
 	function auth_user_flags( $p_event_name, $p_args ) {

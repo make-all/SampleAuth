@@ -45,8 +45,7 @@ class ServerAuthPlugin extends MantisPlugin  {
 
 		$t_user_id = $p_args['user_id'];
 
-		# If user is unknown, don't handle authentication for it, since this plugin doesn't do
-		# auto-provisioning
+		# If user is unknown, TODO auto-provisioning
 		if( !$t_user_id ) {
 			return null;
 		}
@@ -56,14 +55,7 @@ class ServerAuthPlugin extends MantisPlugin  {
 			return null;
 		}
 
-		$t_access_level = user_get_access_level( $t_user_id, ALL_PROJECTS );
-
-		# Have administrators use default login flow
-		if( $t_access_level >= ADMINISTRATOR ) {
-			return null;
-		}
-
-		# for everybody else use the custom authentication
+		# use the custom authentication
 		$t_flags = new AuthFlags();
 
 		# Passwords managed externally for all users
@@ -79,9 +71,9 @@ class ServerAuthPlugin extends MantisPlugin  {
 		# No long term session for identity provider to be able to kick users out.
 		$t_flags->setPermSessionEnabled( false );
 
-		# Enable re-authentication and use more aggressive timeout.
-		$t_flags->setReauthenticationEnabled( true );
-		$t_flags->setReauthenticationLifetime( 10 );
+		# Disable re-authentication, since we can't really force the server to
+		# do anything.
+		$t_flags->setReauthenticationEnabled( false );
 
 		return $t_flags;
 	}

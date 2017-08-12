@@ -10,30 +10,31 @@ The authentication mechanism implemented by this plugin works as follows:
 
 Users can't manage or use passwords that are stored in the MantisBT database when this authentication plugin is used.
 
-## Authentication Flags
-The authentication flags events enables the plugin to control MantisBT core authentication behavior on a per user basis.
-Plugins can also show their own pages to accept credentials from the user.
+## Configuration Options
 
-- `password_managed_elsewhere_message` message to show in MantisBT UI to indicate that password is managed externally.  If left blank or not set, the default message will be used.
-- `can_use_standard_login` true then standard password form and validation is used, false: otherwise.
-- `login_page` Custom login page to use.
-- `credential_apge` The page to show to ask the user for their credential.
-- `logout_page` Custom logout page to use.
-- `logout_redirect_page` Page to redirect to after user is logged out.
-- `session_lifetime` Default session lifetime in seconds or 0 for browser session.
-- `perm_session_enabled` Flag indicating whether remember me functionality is enabled (ON/OFF).
-- `perm_session_lifetime` Lifetime of session when user selected the remember me option.
-- `reauthentication_enabled` A flag indicating whether reauthentication is enabled (ON/OFF).
-- `reauthentication_expiry` The timeout to require re-authentication.  This is only applicable if `reauthentication_enabled` is set to ON.
+- Auto Create Users - set this to allow this plugin to create users automatically. Default is disabled.
+- Email Header - set this to the name of a header the server passes the email address as.  Default is AUTHORIZE_mail.
+- Real Name Header - set this to the name of a header the server passes the real name as.  Default is AUTHORIZE_name.
 
-If a flag is not returned by the plugin, the default value will be used based on MantisBT core configuration.
+## Example Apache configuration for ActiveDirectory
 
-The plugin will get a user id and username within an associative array.  The flags returned are
-in context of such user.  If user is not in db, then user_id will be 0, but username will be what
-the user typed in the first login page that asks for username.
+ActiveDirectory is a user directory using kerberos and LDAP, commonly available in corporate environments with mainly Windows clients.
+An Apache server can be configured with mod_auth_kerb to authenticate against an ActiveDirectory server for single-sign-on. This configuration is quite complex, and there are already pages that describe it, so I will not go into detail here.
 
-If plugin doesn't want to handle a specific user, it should return null.  Otherwise, it should
-return the `AuthFlags` with the overriden settings.
+In addition to kerberos, you can also get further information about the user from LDAP, but the Require condition in Apache has to include checking some information that is only available from LDAP, otherwise it will skip the LDAP step.
+
+    AuthType Kerberos
+	...
+	KrbLocalUserMapping On
+	AuthnzForceUsernameCase Lower
+	AuthLDAPURL "ldap://activedir.server.name/dc=domain,dc=name?sAMAccountName,name,mail" NONE
+	AuthLDAPBindDN "cn=user,ou=group,dc=domain,dc=name"
+	AuthLDAPBindPassword "password"
+	Require ldap-attribute objectClass=person
+
+Note the `,name,mail` on the end of `AuthLDAPURL`.  That causes Apache to include `AUTHORIZE_name` and `AUTHORIZE_mail` headers with those fields from LDAP.  The `Require ldap-attribute objectClass=person` line is basically equivalent to `Require valid-user`, but forces a check against LDAP so the name and mail headers can be populated.  Alternatively, you can use `ldap-group` and/or `ldap-user` conditions to limit access.
+
+Tip: you can use `RequestHeader set AUTHORIZE_name %{ENV_VAR_name}e` to rewrite environment variables into headers if the auth plugin makes user information available in environment variables.
 
 ## Dependencies
 MantisBT v2.4.0.

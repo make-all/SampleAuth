@@ -14,16 +14,24 @@ class ServerAuthPlugin extends MantisPlugin  {
 	function register() {
 		$this->name = plugin_lang_get( 'title' );
 		$this->description = plugin_lang_get( 'description' );
-		$this->page = '';
+		$this->page = 'config_page';
 
-		$this->version = '0.1';
+		$this->version = '0.2';
 		$this->requires = array(
 			'MantisCore' => '2.4.0',
 		);
 
-		$this->author = 'MantisBT Team';
-		$this->contact = 'mantisbt-dev@lists.sourceforge.net';
-		$this->url = 'https://www.mantisbt.org';
+		$this->author = 'The Maker';
+		$this->contact = 'make-all@users.github.com';
+		$this->url = 'https://github.com/make-all/ServerAuth';
+	}
+
+	function config() {
+		return array(
+			"autocreate_users" => false,
+			"email_var" => "AUTHORIZE_mail",
+			"realname_var" => "AUTHORIZE_name"
+		);
 	}
 
 	/**
@@ -46,7 +54,11 @@ class ServerAuthPlugin extends MantisPlugin  {
 		$t_username = $_SERVER['REMOTE_USER'];
 		$t_user_id = empty($t_username) ? false : user_get_id_by_name( $t_username );
 		if ( !$t_user_id ) {
-			// TODO auto create users
+			if (plugin_config_get('autocreate_users')) {
+				$t_email = $_SERVER[plugin_config_get('email_var')];
+				$t_realname = $_SERVER[plugin_config_get('realname_var')];
+				user_create($t_username, auth_generate_random_password(), $t_email, auth_signup_access_level(), false, true, $t_realname);
+			}
 			return;
 		}
 		auth_login_user( $t_user_id );
@@ -59,7 +71,9 @@ class ServerAuthPlugin extends MantisPlugin  {
 
 		$t_user_id = $p_args['user_id'];
 
-		# If user is unknown, TODO auto-provisioning
+		# If user is unknown, don't handle them.  Actually auto-provisioning
+		# needs to be handled above - I'm not even sure if this is called
+		# when the login page is bypassed by that.
 		if( !$t_user_id ) {
 			return null;
 		}

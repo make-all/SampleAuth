@@ -4,3 +4,8 @@
 
 $s_plugin_ServerAuth_title = 'ServerAuth';
 $s_plugin_ServerAuth_description = 'A plugin that defers to the web server for authentication.';
+$s_plugin_ServerAuth_config_title = 'ServerAuth Configuration';
+$s_plugin_ServerAuth_autocreate_users = 'Auto Create Users';
+$s_plugin_ServerAuth_email_var = 'Email Variable';
+$s_plugin_ServerAuth_realname_var = 'Real Name Variable';
+$s_plugin_ServerAuth_action_update = 'Update';

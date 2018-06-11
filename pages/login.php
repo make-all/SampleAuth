@@ -6,13 +6,11 @@ require_once( 'core.php' );
 require_api( 'authentication_api.php' );
 require_api( 'user_api.php' );
 
-$f_username = gpc_get( 'username' );
+$f_username = $_SERVER['REMOTE_USER'];
 $f_reauthenticate = gpc_get_bool( 'reauthenticate', false );
 $f_return = gpc_get_string( 'return', config_get( 'default_home_page' ) );
 
 $t_return = string_url( string_sanitize_url( $f_return ) );
-
-# TODO: use custom authentication method here.
 
 $t_user_id = is_blank( $f_username ) ? false : user_get_id_by_name( $f_username );
 

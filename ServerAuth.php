@@ -54,7 +54,7 @@ class ServerAuthPlugin extends MantisPlugin  {
 		$t_username = $_SERVER['REMOTE_USER'];
 		$t_user_id = empty($t_username) ? false : user_get_id_by_name( $t_username );
 		if ( !$t_user_id ) {
-			if (plugin_config_get('autocreate_users')) {
+			if (!empty(t_username) && plugin_config_get('autocreate_users')) {
 				$t_email = $_SERVER[plugin_config_get('email_var')];
 				$t_realname = $_SERVER[plugin_config_get('realname_var')];
 				user_create($t_username, auth_generate_random_password(), $t_email, auth_signup_access_level(), false, true, $t_realname);

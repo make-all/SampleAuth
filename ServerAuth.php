@@ -51,6 +51,9 @@ class ServerAuthPlugin extends MantisPlugin  {
 		if ( auth_is_user_authenticated() ) {
 			return;
 		}
+		if ( !isset($_SERVER['REMOTE_USER']) )
+			return;
+
 		$t_username = $_SERVER['REMOTE_USER'];
 		$t_user_id = empty($t_username) ? false : user_get_id_by_name( $t_username );
 		if ( !$t_user_id ) {
